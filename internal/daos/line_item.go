@@ -41,7 +41,7 @@ func (v *LineItem) Upsert(LineItem *models.LineItem) error {
 	err := v.Persist(LineItem)
 	if err != nil {
 		qa := pgx.QueryArgs{}
-		q := fmt.Sprintf(`UPDATE LineItem SET name = %s, description = %s, code = %s, price_card_id = %s,
+		q := fmt.Sprintf(`UPDATE Line_Item SET name = %s, description = %s, code = %s, price_card_id = %s,
 		amount = %s WHERE id = %s`, qa.Append(LineItem.Name), qa.Append(LineItem.Description),
 			qa.Append(LineItem.Code), qa.Append(LineItem.PriceCardID), qa.Append(LineItem.Amount),
 			qa.Append(LineItem.ID))
@@ -58,7 +58,7 @@ func (v *LineItem) Upsert(LineItem *models.LineItem) error {
 
 func (v *LineItem) Get(id string) (*models.LineItem, error) {
 	LineItem := &models.LineItem{}
-	err := v.db.GetQueryer().QueryRow(`SELECT * FROM LineItem WHERE id = $1`, id).Scan(
+	err := v.db.GetQueryer().QueryRow(`SELECT * FROM Line_Item WHERE id = $1`, id).Scan(
 		&LineItem.ID,
 		&LineItem.PriceCardID,
 		&LineItem.Name,
@@ -74,7 +74,7 @@ func (v *LineItem) Get(id string) (*models.LineItem, error) {
 }
 
 func (v *LineItem) GetAll() ([]models.LineItem, error) {
-	rows, err := v.db.GetQueryer().Query(`SELECT * FROM LineItem`)
+	rows, err := v.db.GetQueryer().Query(`SELECT * FROM Line_Item`)
 	if err != nil {
 		return nil, err
 	}

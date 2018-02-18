@@ -21,8 +21,8 @@ CREATE INDEX user_age_idx ON user (age);
 
 CREATE TABLE price_card (
 	id UUID PRIMARY KEY,
-	name TEXT,
 	code TEXT,
+	name TEXT,
 	description TEXT,
 	total INTEGER
 );
