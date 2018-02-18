@@ -68,7 +68,7 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 CREATE TABLE tag (
 	id UUID PRIMARY KEY,
 	name TEXT,
-	code TEXT
+	type TEXT
 );
 
 CREATE INDEX tag_name_idx ON tag USING GIST (name gist_trgm_ops);
