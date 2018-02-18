@@ -10,6 +10,6 @@ type Inventory struct {
 	BarCode     string
 	ItemID      string
 	Name        string
-	Descritpion string
+	Description string
 	Status      string
 }
