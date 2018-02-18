@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type Order struct {
 	ID          string
 	UserID      string
@@ -8,4 +10,5 @@ type Order struct {
 	Amount      int
 	Bill        string
 	Inventories []string
+	CreatedAt   time.Time
 }

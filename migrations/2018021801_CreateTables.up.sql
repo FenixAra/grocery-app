@@ -98,5 +98,6 @@ CREATE TABLE order (
 	employee_id  UUID REFERENCES user (id),
 	amount       INTEGER,
 	bill 		 JSON,
-	inventories  []TEXT
+	inventories  []TEXT,
+	created_at   TIMESTAMP WITHOUT TIMEZONE
 );
