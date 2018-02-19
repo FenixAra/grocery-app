@@ -24,7 +24,7 @@ func NewRegister(l *log.Logger, db *db.DBConn) *Register {
 func (v *Register) Persist(Register *models.Register) error {
 	qa := pgx.QueryArgs{}
 	q := fmt.Sprintf(`INSERT INTO Register VALUES (%s, %s, %s) ON CONFLICT DO NOTHING`,
-		qa.Append(Register.ID), qa.Append(Register.UserID), qa.Append(Register.Status))
+		qa.Append(Register.ID), qa.Append(Register.AccountID), qa.Append(Register.Status))
 	ct, err := v.db.GetQueryer().Exec(q, qa...)
 	if err != nil {
 		return err
@@ -41,7 +41,7 @@ func (v *Register) Upsert(Register *models.Register) error {
 	if err != nil {
 		qa := pgx.QueryArgs{}
 		q := fmt.Sprintf(`UPDATE Register SET user_id = %s, status = %s 
-		 WHERE id = %s`, qa.Append(Register.UserID), qa.Append(Register.Status), qa.Append(Register.ID))
+		 WHERE id = %s`, qa.Append(Register.AccountID), qa.Append(Register.Status), qa.Append(Register.ID))
 		_, err := v.db.GetQueryer().Exec(q, qa...)
 		if err != nil {
 			return err
@@ -57,7 +57,7 @@ func (v *Register) Get(id string) (*models.Register, error) {
 	Register := &models.Register{}
 	err := v.db.GetQueryer().QueryRow(`SELECT * FROM Register WHERE id = $1`, id).Scan(
 		&Register.ID,
-		&Register.UserID,
+		&Register.AccountID,
 		&Register.Status,
 	)
 	if err != nil {
@@ -78,7 +78,7 @@ func (v *Register) GetAll() ([]models.Register, error) {
 		var Register models.Register
 		err = rows.Scan(
 			&Register.ID,
-			&Register.UserID,
+			&Register.AccountID,
 			&Register.Status,
 		)
 		if err != nil {

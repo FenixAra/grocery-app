@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -20,6 +21,25 @@ type RequestData struct {
 	s      time.Time
 	w      http.ResponseWriter
 	r      *http.Request
+}
+
+func LoadJson(r *http.Request, v interface{}) error {
+	if v == nil {
+		return nil
+	}
+
+	content, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+
+	defer r.Body.Close()
+	err = json.Unmarshal(content, &v)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func logAndGetContext(w http.ResponseWriter, r *http.Request) *RequestData {

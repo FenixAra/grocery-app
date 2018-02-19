@@ -69,6 +69,28 @@ func (v *Category) Get(id string) (*models.Category, error) {
 	return category, nil
 }
 
+func (v *Category) GetParent(id string) ([]string, error) {
+	rows, err := v.db.GetQueryer().Query(`SELECT parent_id FROM category WHERE id = $1`, id)
+	if err != nil {
+		return nil, err
+	}
+
+	var parentIDs []string
+	for rows.Next() {
+		var parentID string
+		err = rows.Scan(&parentID)
+		if err != nil {
+			return nil, err
+		}
+
+		if parentID != "" {
+			parentIDs = append(parentIDs, parentID)
+		}
+	}
+
+	return parentIDs, nil
+}
+
 func (v *Category) GetAll() ([]models.Category, error) {
 	rows, err := v.db.GetQueryer().Query(`SELECT * FROM category`)
 	if err != nil {

@@ -7,7 +7,7 @@ CREATE TABLE category (
 
 CREATE INDEX category_parent_id_idx ON category (parent_id);
 
-CREATE TABLE user (
+CREATE TABLE account (
 	id UUID PRIMARY KEY,
 	name TEXT,
 	email TEXT,
@@ -16,7 +16,7 @@ CREATE TABLE user (
 	age INTEGER
 );
 
-CREATE INDEX user_age_idx ON user (age);
+CREATE INDEX account_age_idx ON account (age);
 
 
 CREATE TABLE price_card (
@@ -48,7 +48,7 @@ CREATE TABLE discount(
 	amount      INTEGER,
 	percent     INTEGER,
 	inclusion   TEXT[],
-	ixclusion   TEXT[]
+	exclusion   TEXT[]
 );
 
 CREATE INDEX discount_inclusion_idx ON discount USING GIN (inclusion);
@@ -60,7 +60,7 @@ CREATE TABLE item (
 	code        TEXT,
 	description TEXT,
 	price_card_id UUID REFERENCES price_card (id),
-	tags        []TEXT
+	tags        TEXT[]
 );
 
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
@@ -85,19 +85,19 @@ CREATE INDEX inventory_status_idx ON inventory (status);
 
 CREATE TABLE register (
 	id UUID PRIMARY KEY,
-	user_id UUID REFERENCES user (id),
+	account_id UUID REFERENCES account (id),
 	status TEXT
 );
 
 CREATE INDEX register_status_idx ON register (status);
 
-CREATE TABLE order (
+CREATE TABLE booking (
 	id           UUID PRIMARY KEY,
-	user_id      UUID REFERENCES user (id),
+	account_id      UUID REFERENCES account (id),
 	register_id  UUID REFERENCES register (id),
-	employee_id  UUID REFERENCES user (id),
+	employee_id  UUID REFERENCES account (id),
 	amount       INTEGER,
 	bill 		 JSON,
-	inventories  []TEXT,
-	created_at   TIMESTAMP WITHOUT TIMEZONE
+	inventories  TEXT[],
+	created_at   TIMESTAMP WITHOUT TIME ZONE
 );

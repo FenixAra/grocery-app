@@ -19,6 +19,7 @@ func GetRouter() http.Handler {
 	router := httprouter.New()
 	router.PanicHandler = PanicHandler
 	setPingRoutes(router)
+	setAdminRoutes(router)
 
 	return router
 }

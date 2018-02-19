@@ -2,6 +2,7 @@ package db
 
 import (
 	"os"
+	"runtime/debug"
 	"sync"
 
 	"github.com/FenixAra/grocery-app/internal/config"
@@ -87,6 +88,7 @@ func (db *DBConn) ExecuteInTransaction(f func() error) (err error) {
 
 	defer func() {
 		if r := recover(); r != nil {
+			db.l.Fatal(r, ":", string(debug.Stack()))
 			db.l.Fatal("Recovered in function ", r)
 			db.rollbackTransaction(tx)
 		}

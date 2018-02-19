@@ -18,7 +18,7 @@ func Ping(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	err := p.Ping()
 	if err != nil {
 		writeJSONMessage(err.Error(), ERR_MSG, http.StatusInternalServerError, rd)
-	} else {
-		writeJSONMessage("pong", MSG, http.StatusOK, rd)
+		return
 	}
+	writeJSONMessage("pong", MSG, http.StatusOK, rd)
 }

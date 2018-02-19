@@ -7,7 +7,7 @@ const (
 )
 
 type Register struct {
-	ID     string
-	UserID string
-	Status string
+	ID        string
+	AccountID string
+	Status    string
 }
