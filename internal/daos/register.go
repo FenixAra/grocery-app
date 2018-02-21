@@ -40,8 +40,13 @@ func (v *Register) Upsert(Register *models.Register) error {
 	err := v.Persist(Register)
 	if err != nil {
 		qa := pgx.QueryArgs{}
-		q := fmt.Sprintf(`UPDATE Register SET user_id = %s, status = %s 
-		 WHERE id = %s`, qa.Append(Register.AccountID), qa.Append(Register.Status), qa.Append(Register.ID))
+		q := `UPDATE Register SET `
+		if Register.AccountID.Valid {
+			q += `user_id = ` + qa.Append(Register.AccountID) + `,`
+		}
+
+		q += fmt.Sprintf(` status = %s 
+		 WHERE id = %s`, qa.Append(Register.Status), qa.Append(Register.ID))
 		_, err := v.db.GetQueryer().Exec(q, qa...)
 		if err != nil {
 			return err
