@@ -7,9 +7,9 @@ import (
 )
 
 const (
-	RegisterClosed    = "RegisterClosed"
-	RegisterOccupied  = "RegisterOccupied"
-	RegisterAvailable = "RegisterAvailable"
+	RegisterClosed    = "Closed"
+	RegisterOccupied  = "Occupied"
+	RegisterAvailable = "Available"
 )
 
 type Register struct {

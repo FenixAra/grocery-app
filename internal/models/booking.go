@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"github.com/FenixAra/grocery-app/dtos"
+)
 
 type Booking struct {
 	ID          string
@@ -8,7 +12,7 @@ type Booking struct {
 	RegisterID  string
 	EmployeeID  string
 	Amount      int
-	Bill        string
+	Bill        dtos.Bill
 	Inventories []string
 	CreatedAt   time.Time
 }

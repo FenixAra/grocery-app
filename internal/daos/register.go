@@ -1,12 +1,17 @@
 package daos
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/FenixAra/grocery-app/internal/daos/db"
 	"github.com/FenixAra/grocery-app/internal/models"
 	"github.com/FenixAra/grocery-app/utils/log"
 	pgx "gopkg.in/jackc/pgx.v2"
+)
+
+var (
+	ErrNoRowsUpdated = errors.New("No Rows Updated")
 )
 
 type Register struct {
@@ -41,10 +46,7 @@ func (v *Register) Upsert(Register *models.Register) error {
 	if err != nil {
 		qa := pgx.QueryArgs{}
 		q := `UPDATE Register SET `
-		if Register.AccountID.Valid {
-			q += `user_id = ` + qa.Append(Register.AccountID) + `,`
-		}
-
+		q += `account_id = ` + qa.Append(Register.AccountID) + `,`
 		q += fmt.Sprintf(` status = %s 
 		 WHERE id = %s`, qa.Append(Register.Status), qa.Append(Register.ID))
 		_, err := v.db.GetQueryer().Exec(q, qa...)
@@ -70,6 +72,41 @@ func (v *Register) Get(id string) (*models.Register, error) {
 	}
 
 	return Register, nil
+}
+
+func (v *Register) SetStatus(id, status, prevStatus string) error {
+	ct, err := v.db.GetQueryer().Exec(`UPDATE register SET status = $1 WHERE id = $2 AND status = $3`, status, id, prevStatus)
+	if err != nil {
+		return err
+	}
+
+	if ct.RowsAffected() == 0 {
+		return ErrNoRowsUpdated
+	}
+
+	return nil
+}
+
+func (v *Register) GetAvailable() ([]string, error) {
+	rows, err := v.db.GetQueryer().Query(`SELECT id FROM Register WHERE status = $1`, models.RegisterAvailable)
+	if err != nil {
+		return nil, err
+	}
+
+	var Registers []string
+	for rows.Next() {
+		var Register string
+		err = rows.Scan(
+			&Register,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		Registers = append(Registers, Register)
+	}
+
+	return Registers, nil
 }
 
 func (v *Register) GetAll() ([]models.Register, error) {

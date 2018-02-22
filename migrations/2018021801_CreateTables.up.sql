@@ -95,11 +95,21 @@ CREATE INDEX register_status_idx ON register (status);
 
 CREATE TABLE booking (
 	id           UUID PRIMARY KEY,
-	account_id      UUID REFERENCES account (id),
+	account_id   UUID REFERENCES account (id),
 	register_id  UUID REFERENCES register (id),
 	employee_id  UUID REFERENCES account (id),
 	amount       INTEGER,
 	bill 		 JSON,
 	inventories  TEXT[],
 	created_at   TIMESTAMP WITHOUT TIME ZONE
+);
+
+
+CREATE TABLE payment (
+	id UUID PRIMARY KEY,
+	booking_id UUID REFERENCES booking(id),
+	mode TEXT,
+	payment_ref TEXT,
+	amount INTEGER,
+	status TEXT
 );

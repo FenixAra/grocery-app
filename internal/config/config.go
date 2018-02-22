@@ -20,6 +20,9 @@ var (
 	REDIS_CONN_POOL_IDLE_TIMEOUT_MINS int
 	REDIS_MAX_ACTIVE_CONNECTIONS      int
 	EXPIRY_TIME                       int
+
+	EMPLOYEE_TAG       = "44f17276-4107-4ba1-a7bc-729772ed42c9"
+	SENIOR_CITIZEN_TAG = "535b293b-56aa-4bcf-b47a-56a2563529db"
 )
 
 func init() {

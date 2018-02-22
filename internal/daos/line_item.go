@@ -73,6 +73,33 @@ func (v *LineItem) Get(id string) (*models.LineItem, error) {
 	return LineItem, nil
 }
 
+func (v *LineItem) GetForPriceCardID(priceCardID string) ([]models.LineItem, error) {
+	rows, err := v.db.GetQueryer().Query(`SELECT * FROM Line_Item WHERE price_card_id = $1`, priceCardID)
+	if err != nil {
+		return nil, err
+	}
+
+	var LineItems []models.LineItem
+	for rows.Next() {
+		var LineItem models.LineItem
+		err = rows.Scan(
+			&LineItem.ID,
+			&LineItem.PriceCardID,
+			&LineItem.Name,
+			&LineItem.Code,
+			&LineItem.Description,
+			&LineItem.Amount,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		LineItems = append(LineItems, LineItem)
+	}
+
+	return LineItems, nil
+}
+
 func (v *LineItem) GetAll() ([]models.LineItem, error) {
 	rows, err := v.db.GetQueryer().Query(`SELECT * FROM Line_Item`)
 	if err != nil {

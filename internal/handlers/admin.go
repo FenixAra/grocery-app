@@ -14,7 +14,7 @@ func setAdminRoutes(router *httprouter.Router) {
 	router.POST("/admin/discounts", SaveDiscount)
 	router.POST("/admin/inventories", SaveInventory)
 	router.POST("/admin/registers", SaveRegister)
-	router.POST("/admin/account/type", ChangeAccountType)
+	router.PUT("/admin/account/type", ChangeAccountType)
 }
 
 func ChangeAccountType(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {

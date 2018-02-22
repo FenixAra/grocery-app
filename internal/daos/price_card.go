@@ -41,7 +41,7 @@ func (v *PriceCard) Upsert(PriceCard *models.PriceCard) error {
 	err := v.Persist(PriceCard)
 	if err != nil {
 		qa := pgx.QueryArgs{}
-		q := fmt.Sprintf(`UPDATE Price_Card SET name = %s, description = %s, code = %s, total = %s,
+		q := fmt.Sprintf(`UPDATE Price_Card SET name = %s, description = %s, code = %s, total = %s
 		 WHERE id = %s`, qa.Append(PriceCard.Name), qa.Append(PriceCard.Description), qa.Append(PriceCard.Code),
 			qa.Append(PriceCard.Total), qa.Append(PriceCard.ID))
 		_, err := v.db.GetQueryer().Exec(q, qa...)

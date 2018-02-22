@@ -8,5 +8,6 @@ DROP TABLE line_item;
 DROP TABLE price_card;
 DROP TABLE user;
 DROP TABLE category;
+DROP TABLE payment;
 
 DROP EXTENSION IF EXISTS pg_trgm;

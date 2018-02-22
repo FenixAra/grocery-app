@@ -1,12 +1,18 @@
 package daos
 
 import (
+	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/FenixAra/grocery-app/internal/daos/db"
 	"github.com/FenixAra/grocery-app/internal/models"
 	"github.com/FenixAra/grocery-app/utils/log"
 	pgx "gopkg.in/jackc/pgx.v2"
+)
+
+var (
+	ErrUpdateFailedForFew = errors.New("Update failed for few")
 )
 
 type Inventory struct {
@@ -69,6 +75,49 @@ func (v *Inventory) Get(barCode string) (*models.Inventory, error) {
 	}
 
 	return Inventory, nil
+}
+
+func (v *Inventory) InventoryStatus(barCodes []string, status, prevStatus string) error {
+	qa := pgx.QueryArgs{}
+	var barCodeQAs []string
+	q := `UPDATE Inventory SET status = ` + qa.Append(status)
+	for _, barCode := range barCodes {
+		barCodeQAs = append(barCodeQAs, qa.Append(barCode))
+	}
+	q += fmt.Sprintf(` WHERE bar_code IN (%s) AND status = %s`, strings.Join(barCodeQAs, ","), qa.Append(prevStatus))
+	ct, err := v.db.GetQueryer().Exec(q, qa...)
+	if err != nil {
+		return err
+	}
+
+	if int(ct.RowsAffected()) != len(barCodes) {
+		return ErrUpdateFailedForFew
+	}
+
+	return nil
+}
+
+func (v *Inventory) GetAvailable(itemID string) ([]string, error) {
+	rows, err := v.db.GetQueryer().Query(`SELECT bar_code FROM Inventory WHERE item_id = $1 AND status = $2`,
+		itemID, models.InventoryAvailable)
+	if err != nil {
+		return nil, err
+	}
+
+	var Inventories []string
+	for rows.Next() {
+		var Inventory string
+		err = rows.Scan(
+			&Inventory,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		Inventories = append(Inventories, Inventory)
+	}
+
+	return Inventories, nil
 }
 
 func (v *Inventory) GetAll() ([]models.Inventory, error) {

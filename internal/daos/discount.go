@@ -78,6 +78,37 @@ func (v *Discount) Get(id string) (*models.Discount, error) {
 	return Discount, nil
 }
 
+func (v *Discount) GetForTags(tags []string) ([]models.Discount, error) {
+	rows, err := v.db.GetQueryer().Query(`SELECT * FROM Discount WHERE 
+		(inclusion = '{}' OR $1 @> inclusion) AND NOT($1 && exclusion)`, tags)
+	if err != nil {
+		return nil, err
+	}
+
+	var Discounts []models.Discount
+	for rows.Next() {
+		var Discount models.Discount
+		err = rows.Scan(
+			&Discount.ID,
+			&Discount.Name,
+			&Discount.Code,
+			&Discount.Description,
+			&Discount.Type,
+			&Discount.Amount,
+			&Discount.Percent,
+			&Discount.Inclusion,
+			&Discount.Exclusion,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		Discounts = append(Discounts, Discount)
+	}
+
+	return Discounts, nil
+}
+
 func (v *Discount) GetAll() ([]models.Discount, error) {
 	rows, err := v.db.GetQueryer().Query(`SELECT * FROM Discount`)
 	if err != nil {

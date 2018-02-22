@@ -60,12 +60,14 @@ func (i *Item) Save(item *dtos.Item) error {
 	return i.dbConn.ExecuteInTransaction(func() error {
 		err := i.priceCard.Upsert(models.NewPriceCard(&item.PriceCard))
 		if err != nil {
+			i.l.Error("Err:", err)
 			return err
 		}
 
 		for _, lineItem := range item.PriceCard.LineItems {
 			err = i.lineItem.Upsert(models.NewLineItem(&lineItem))
 			if err != nil {
+				i.l.Error("Err:", err)
 				return err
 			}
 		}
@@ -73,12 +75,14 @@ func (i *Item) Save(item *dtos.Item) error {
 		item.PriceCardID = item.PriceCard.ID
 		item.Tags, err = i.GetTags(item.Categories)
 		if err != nil {
+			i.l.Error("Err:", err)
 			return err
 		}
 
 		item.Tags = append(item.Tags, item.ID)
 		err = i.item.Upsert(models.NewItem(item))
 		if err != nil {
+			i.l.Error("Err:", err)
 			return err
 		}
 

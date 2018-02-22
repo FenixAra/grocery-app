@@ -10,7 +10,25 @@ import (
 
 func setClientRoutes(router *httprouter.Router) {
 	router.POST("/accounts", SaveAccount)
-	router.POST("/registers/status", OccupyRegister)
+	router.PUT("/registers/status", OccupyRegister)
+	router.POST("/bookings", BuyItems)
+}
+
+func BuyItems(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	rd := logAndGetContext(w, r)
+	s := services.NewBooking(rd.l, rd.dbConn)
+	req := &dtos.BookingData{}
+	err := LoadJson(r, req)
+	if err != nil {
+		writeJSONMessage("Unable to unmarshal json. Err:"+err.Error(), MSG, http.StatusBadRequest, rd)
+	}
+
+	res, err := s.ConfirmBooking(req)
+	if err != nil {
+		writeJSONMessage(err.Error(), ERR_MSG, http.StatusInternalServerError, rd)
+		return
+	}
+	writeJSONStruct(res, http.StatusOK, rd)
 }
 
 func OccupyRegister(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
