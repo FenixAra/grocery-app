@@ -33,3 +33,17 @@ func (r *Register) Save(req *dtos.Register) error {
 
 	return nil
 }
+
+func (r *Register) OccupyRegister(req *dtos.OccupyRegister) error {
+	register, err := r.register.Get(req.ID)
+	if err != nil {
+		return err
+	}
+
+	register.AccountID.String = req.AccountID
+	if req.AccountID != "" {
+		register.AccountID.Valid = true
+	}
+	register.Status = req.Status
+	return r.register.Upsert(register)
+}

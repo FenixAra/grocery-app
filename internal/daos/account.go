@@ -23,7 +23,7 @@ func NewAccount(l *log.Logger, db *db.DBConn) *Account {
 
 func (v *Account) Persist(Account *models.Account) error {
 	qa := pgx.QueryArgs{}
-	q := fmt.Sprintf(`INSERT INTO Account VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING`,
+	q := fmt.Sprintf(`INSERT INTO Account VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT (id) DO NOTHING`,
 		qa.Append(Account.ID), qa.Append(Account.Name), qa.Append(Account.Email), qa.Append(Account.Mobile),
 		qa.Append(Account.Type), qa.Append(Account.Age))
 	ct, err := v.db.GetQueryer().Exec(q, qa...)

@@ -14,6 +14,24 @@ func setAdminRoutes(router *httprouter.Router) {
 	router.POST("/admin/discounts", SaveDiscount)
 	router.POST("/admin/inventories", SaveInventory)
 	router.POST("/admin/registers", SaveRegister)
+	router.POST("/admin/account/type", ChangeAccountType)
+}
+
+func ChangeAccountType(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	rd := logAndGetContext(w, r)
+	s := services.NewAccount(rd.l, rd.dbConn)
+	req := &dtos.ChangeAccountType{}
+	err := LoadJson(r, req)
+	if err != nil {
+		writeJSONMessage("Unable to unmarshal json. Err:"+err.Error(), MSG, http.StatusBadRequest, rd)
+	}
+
+	err = s.ChangeType(req)
+	if err != nil {
+		writeJSONMessage(err.Error(), ERR_MSG, http.StatusInternalServerError, rd)
+		return
+	}
+	writeJSONMessage("SUCCESS", MSG, http.StatusOK, rd)
 }
 
 func SaveRegister(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {

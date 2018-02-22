@@ -17,6 +17,8 @@ CREATE TABLE account (
 );
 
 CREATE INDEX account_age_idx ON account (age);
+CREATE UNIQUE INDEX account_email_idx ON account (email);
+CREATE UNIQUE INDEX account_mobile_idx ON account (mobile);
 
 
 CREATE TABLE price_card (
